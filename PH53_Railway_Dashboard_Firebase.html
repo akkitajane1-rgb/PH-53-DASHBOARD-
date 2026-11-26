@@ -326,4 +326,10 @@ $('#dt').innerHTML=`<p><button class="back" onclick="sums()">Back</button> <butt
 <div class="bars">${v.rows.map((r,j)=>`<div class="br ${rt[j]==mx?'mx':''}"><span class="lk" onclick="wk(${i},${j})">${r}</span><div class="tr"><i style="width:${mx?rt[j]/mx*100:0}%"></i></div><b>${f(rt[j])}</b></div>`).join('')}</div>
 <div class="sc"><table><thead><tr><th>${v.th}</th>${v.cols.map(c=>`<th>${c}</th>`).join('')}<th>Total</th>${tc?'<th>Cost</th>':''}</tr></thead><tbody>${M.map((r,j)=>`<tr><td class="lk" onclick="wk(${i},${j})">${v.rows[j]}</td>${r.map(x=>`<td class="${x?'':'z'}">${x?f(x):'–'}</td>`).join('')}<td><b>${f(rt[j])}</b></td>${tc?`<td>${n2(v.tc[j])}</td>`:''}</tr>`).join('')}</tbody><tfoot><tr><td>Total</td>${ct.map(x=>`<td>${f(x)}</td>`).join('')}<td>${f(sum(rt))}</td>${tc?`<td>${n2(sum(v.tc))}</td>`:''}</tr></tfoot></table></div>`;if(i==4)$('#dt .sc').outerHTML=blk(v,i);
 $('#home').hidden=true;$('#dt').hidden=false;scrollTo(0,0)}
-</script></body></html>
+</script></body><script>
+if ("serviceWorker" in navigator) {
+  window.addEventListener("load", () => {
+    navigator.serviceWorker.register("./sw.js");
+  });
+}
+</script></html>

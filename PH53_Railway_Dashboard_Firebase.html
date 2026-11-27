@@ -179,6 +179,44 @@ textarea,.fl input,.fl select{border-radius:8px;border-color:var(--line)}
  .mini{grid-template-columns:1fr}
 }
 
+
+/* PH53 ORIENTATION RESPONSIVE LAYOUT — presentation only */
+@media (orientation:portrait) and (max-width:520px){
+  html,body{width:100%;min-width:0}
+  main{width:100%;min-width:0}
+  .kp{grid-template-columns:repeat(2,minmax(0,1fr))}
+  .mini{grid-template-columns:minmax(0,1fr)}
+  .sc{max-width:100%;overflow-x:auto;-webkit-overflow-scrolling:touch}
+  .fl{min-width:0}
+  .fl input,.fl select{max-width:100%}
+}
+@media (orientation:landscape) and (max-height:600px){
+  header{padding:9px 16px 0}
+  .brandline{margin-bottom:5px;font-size:9px;letter-spacing:1.5px}
+  .board{font-size:38px;padding:4px 18px}
+  header p{margin:6px 0 8px;font-size:10px;letter-spacing:1px}
+  .lamps{top:12px;right:16px}
+  .rail{height:9px}
+  main{width:100%;max-width:none;padding:12px 16px 20px}
+  h2{font-size:21px;margin:16px 0 9px}
+  .kp{grid-template-columns:repeat(4,minmax(0,1fr));gap:8px}
+  .k{padding:9px 11px}
+  .k b{font-size:clamp(23px,4vw,32px)}
+  .mini{grid-template-columns:repeat(2,minmax(0,1fr));gap:10px;margin-top:10px}
+  .card{padding:11px}
+  .opt{padding:9px 11px;margin-bottom:7px}
+  .sc{max-width:100%;overflow-x:auto;-webkit-overflow-scrolling:touch}
+}
+@media (orientation:landscape) and (max-height:600px) and (max-width:700px){
+  .kp{grid-template-columns:repeat(2,minmax(0,1fr))}
+  .mini{grid-template-columns:repeat(2,minmax(0,1fr))}
+  main{padding-left:10px;padding-right:10px}
+  .board{font-size:34px}
+}
+@media (orientation:landscape) and (min-height:601px){
+  main{width:100%;max-width:1120px}
+}
+
 </style></head><body>
 <header><div class="lamps"><i></i><i></i><i></i></div><div class="brandline">INDIAN RAILWAYS <span>•</span> WESTERN RAILWAY</div><div class="board" id="hm" role="button" tabindex="0" title="Home">PH-53</div><p>PASSENGER AMENITIES · WORKS MONITORING DASHBOARD</p><div class="rail"></div></header>
 <main>

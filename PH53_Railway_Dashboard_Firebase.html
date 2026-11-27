@@ -217,6 +217,28 @@ textarea,.fl input,.fl select{border-radius:8px;border-color:var(--line)}
   main{width:100%;max-width:1120px}
 }
 
+
+/* PH53 MOBILE PORTRAIT OVERRIDE — layout only */
+@media screen and (max-device-width:600px), screen and (max-width:600px){
+  html,body{width:100%;max-width:100%;min-width:0;overflow-x:hidden}
+  *,*::before,*::after{box-sizing:border-box}
+  header{width:100%;padding:14px 12px 0}
+  .brandline{font-size:9px;letter-spacing:1.4px}
+  .board{font-size:clamp(30px,10vw,46px);padding:4px 12px;max-width:100%}
+  header p{font-size:10px;letter-spacing:1px;margin:8px 0 12px}
+  .lamps{right:12px;top:14px}
+  main{display:block;width:100%;max-width:100%;min-width:0;margin:0;padding:12px 10px 22px}
+  h2{font-size:21px;margin:16px 0 9px}
+  .kp{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px;width:100%;min-width:0}
+  .k{min-width:0;padding:10px}
+  .k b{font-size:clamp(22px,7vw,29px)}
+  .mini{display:grid;grid-template-columns:minmax(0,1fr);gap:10px;width:100%;min-width:0}
+  .card,.opt,.fl{min-width:0;max-width:100%}
+  .sc{display:block;width:100%;max-width:100%;overflow-x:auto;overflow-y:hidden;-webkit-overflow-scrolling:touch}
+  table{max-width:none}
+  .fl input,.fl select,.fl textarea,textarea{max-width:100%;min-width:0}
+  img,canvas,svg{max-width:100%}
+}
 </style></head><body>
 <header><div class="lamps"><i></i><i></i><i></i></div><div class="brandline">INDIAN RAILWAYS <span>•</span> WESTERN RAILWAY</div><div class="board" id="hm" role="button" tabindex="0" title="Home">PH-53</div><p>PASSENGER AMENITIES · WORKS MONITORING DASHBOARD</p><div class="rail"></div></header>
 <main>

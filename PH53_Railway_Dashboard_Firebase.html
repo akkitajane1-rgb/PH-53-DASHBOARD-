@@ -313,18 +313,21 @@ let DB=null,FB_AUTH=null,FB_READY=false,LAST_UPDATED=0;
  }catch(e){console.error('Firebase init failed:',e);const el=document.querySelector('#dt');if(el)el.insertAdjacentHTML('afterbegin','<p class="mu">Cloud connection उपलब्ध नाही. Internet आणि Firebase settings तपासा.</p>')}})();
 async function ensureAdmin(){
  if(!FB_READY||!FB_AUTH)throw new Error('Firebase अजून connect झालेले नाही. पान refresh करा.');
- const ADMIN_UID='IlRmKcnXaghd3vJC4KgmQL3oCO2';
+ const ADMIN_UID='IlRmKcnXaghd3vJC4KgmQL3oCO2',DEVICE_KEY='ph53_admin_device_v1';
  const {signInWithEmailAndPassword,signOut}=await import('https://www.gstatic.com/firebasejs/13.4.0/firebase-auth.js');
+ // Remember admin approval only in this browser/device; an old Firebase session alone is not enough.
  try{if(FB_AUTH.authStateReady)await FB_AUTH.authStateReady()}catch(e){}
- // प्रत्येक Update वेळी जुने Firebase session बंद करून नव्याने Admin login मागा.
+ let trusted=false;try{trusted=localStorage.getItem(DEVICE_KEY)===ADMIN_UID}catch(e){}
+ if(FB_AUTH.currentUser&&trusted&&FB_AUTH.currentUser.uid===ADMIN_UID)return FB_AUTH.currentUser;
  if(FB_AUTH.currentUser)await signOut(FB_AUTH);
  const email=prompt('Admin Email टाका:');if(!email)throw new Error('Admin login रद्द केले.');
  const password=prompt('Admin Password टाका:');if(!password)throw new Error('Admin login रद्द केले.');
  const result=await signInWithEmailAndPassword(FB_AUTH,email.trim(),password);
  if(result.user.uid!==ADMIN_UID){await signOut(FB_AUTH);throw new Error('हा Admin Account नाही. अधिकृत Admin Login वापरा.');}
+ try{localStorage.setItem(DEVICE_KEY,ADMIN_UID)}catch(e){await signOut(FB_AUTH);throw new Error('या browser मध्ये Admin device login सेव्ह करता येत नाही. Browser storage सुरू करा.');}
  return result.user;
 }
-async function save(W){if(!DB||!FB_READY)return 'Firebase जोडलेले नाही. पान refresh करून पुन्हा प्रयत्न करा.';try{const ch=[];let cur=[],sz=0;for(const r of W){const l=JSON.stringify(r).length;if(sz+l>120000&&cur.length){ch.push(cur);cur=[];sz=0}cur.push(r);sz+=l}if(cur.length)ch.push(cur);const n=ch.length;for(let i=0;i<n;i++)await DB.doc('ph53/c'+i).set({r:JSON.stringify(ch[i])});const updatedAt=Date.now();await DB.doc('ph53/meta').set({n,t:updatedAt,c:JSON.stringify(D.cols||[])});LAST_UPDATED=updatedAt;const stampEl=document.querySelector('#lastUpdated');if(stampEl)stampEl.textContent=updateStamp();return 'Cloud वर Save झालं. सर्वांना नवीन data दिसेल.'}catch(e){return 'Cloud save अयशस्वी: '+(e.message||e.code)}}
+async function save(W){if(!DB||!FB_READY)return 'Firebase जोडलेले नाही. पान refresh करून पुन्हा प्रयत्न करा.';try{await ensureAdmin();const ch=[];let cur=[],sz=0;for(const r of W){const l=JSON.stringify(r).length;if(sz+l>120000&&cur.length){ch.push(cur);cur=[];sz=0}cur.push(r);sz+=l}if(cur.length)ch.push(cur);const n=ch.length;for(let i=0;i<n;i++)await DB.doc('ph53/c'+i).set({r:JSON.stringify(ch[i])});const updatedAt=Date.now();await DB.doc('ph53/meta').set({n,t:updatedAt,c:JSON.stringify(D.cols||[])});LAST_UPDATED=updatedAt;const stampEl=document.querySelector('#lastUpdated');if(stampEl)stampEl.textContent=updateStamp();return 'Cloud वर Save झालं. सर्वांना नवीन data दिसेल.'}catch(e){return 'Cloud save अयशस्वी: '+(e.message||e.code)}}
 const crcT=(()=>{const a=[];for(let n=0;n<256;n++){let c=n;for(let k=0;k<8;k++)c=c&1?0xEDB88320^(c>>>1):c>>>1;a[n]=c>>>0}return a})();
 const crc=b=>{let c=-1;for(const x of b)c=crcT[(c^x)&255]^(c>>>8);return(c^-1)>>>0};
 function zip(files){const E=new TextEncoder(),P=[],C=[],u2=n=>[n&255,n>>8&255],u4=n=>[n&255,n>>8&255,n>>16&255,n>>>24];let o=0;

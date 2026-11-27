@@ -1,4 +1,4 @@
-const CACHE_NAME = "ph53-dashboard-v10";
+const CACHE_NAME = "ph53-dashboard-v11";
 
 const FILES_TO_CACHE = [
   "./",

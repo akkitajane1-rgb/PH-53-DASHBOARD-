@@ -332,7 +332,9 @@ const fv=(h,x)=>{if(/^-?\d+(\.\d+)?(E[+-]?\d+)?$/i.test(x)){const v=Number(x);if
 const nz=s=>String(s==null?'':s).toLowerCase().replace(/[^a-z0-9]/g,'');
 const TK={nm:['shortnameofwork','nameofwork','workname'],yr:['yearofsanction','sanctionyear','year'],pb:['pbitem','pb'],dv:['division','divn','div','railwaydivision'],st:['state'],ag:['executingagencyrly','executingagency','agency'],co:['currentcost','cost'],pr:['agephyprogress','phyprogress','physicalprogress','progress']},TC={nm:['shortnameofwork','nameofwork'],yr:['yearofsanction'],pb:['pbitem'],dv:['division'],st:[],ag:['executingagency'],co:['currentcost'],pr:['phyprogress','physicalprogress']};
 const fm=(h,k)=>{let i=h.indexOf(nz(FN[k]));if(i>=0)return i;for(const t of TK[k]){i=h.indexOf(t);if(i>=0)return i}for(const t of TC[k]){i=h.findIndex(x=>x.includes(t));if(i>=0)return i}return -1};
-async function doUpd(f){const msg=$('#um2'),add=$('#um').value=='a';if(!f)return;msg.textContent='File वाचतोय...';
+async function doUpd(f){const msg=$('#um2'),add=$('#um').value=='a';if(!f)return;
+try{await ensureAdmin()}catch(e){msg.textContent='Admin login आवश्यक: '+(e.message||e);return}
+msg.textContent='File वाचतोय...';
 try{const SH=await readX(await f.arrayBuffer()),num=x=>{const v=parseFloat(String(x==null?'':x).replace(/[,%\s]/g,''));return isNaN(v)?0:v},sx=x=>String(x==null?'':x).trim(),K=Object.keys(FN),W=[],used=[],skip=[],CS=new Set(add&&D.cols&&D.cols.length?D.cols:[]);
 for(const[nm,R]of SH){if(/^(summaries|lists|combined|setup)$/i.test(nm))continue;let best=-1,bi=0,bx={};
 for(let i=0;i<Math.min(R.length,20);i++){if(!R[i])continue;const h=[...R[i]].map(nz),ix={};let c=0;for(const k of K){ix[k]=fm(h,k);if(ix[k]>=0)c++}if(c>best){best=c;bi=i;bx=ix}}

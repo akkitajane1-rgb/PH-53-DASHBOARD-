@@ -313,7 +313,7 @@ let DB=null,FB_AUTH=null,FB_READY=false,LAST_UPDATED=0;
  }catch(e){console.error('Firebase init failed:',e);const el=document.querySelector('#dt');if(el)el.insertAdjacentHTML('afterbegin','<p class="mu">Cloud connection उपलब्ध नाही. Internet आणि Firebase settings तपासा.</p>')}})();
 async function ensureAdmin(){
  if(!FB_READY||!FB_AUTH)throw new Error('Firebase अजून connect झालेले नाही. पान refresh करा.');
- const ADMIN_UID='IlRmKcnXaghd3vJC4KgmQL3oCO2',DEVICE_KEY='ph53_admin_device_v1';
+ const ADMIN_UID='IlRmKcnXaghd3vJC4K2gmQL3oCO2',DEVICE_KEY='ph53_admin_device_v1';
  const {signInWithEmailAndPassword,signOut}=await import('https://www.gstatic.com/firebasejs/13.4.0/firebase-auth.js');
  // Remember admin approval only in this browser/device; an old Firebase session alone is not enough.
  try{if(FB_AUTH.authStateReady)await FB_AUTH.authStateReady()}catch(e){}

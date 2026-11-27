@@ -231,6 +231,23 @@ let DB=null,FB_AUTH=null,FB_READY=false;
  const m=await DB.doc('ph53/meta').get();if(!m.exists)return;let W=[];
  for(let i=0;i<m.data().n;i++){const c=await DB.doc('ph53/c'+i).get();if(c.exists)W=W.concat(JSON.parse(c.data().r))}
  if(W.length){D=build(W);if(m.data().c){const cc=JSON.parse(m.data().c);if(cc.length)D.cols=cc}paint()}
+ // Live Sync: refresh connected dashboards whenever Admin saves cloud data.
+ let liveSyncRun=0;
+ fsMod.onSnapshot(fsMod.doc(db,'ph53/meta'),async snap=>{
+  const run=++liveSyncRun;
+  try{
+   if(!snap.exists())return;
+   const meta=snap.data();let latest=[];
+   for(let i=0;i<meta.n;i++){
+    const part=await DB.doc('ph53/c'+i).get();
+    if(part.exists)latest=latest.concat(JSON.parse(part.data().r));
+   }
+   if(run!==liveSyncRun||!latest.length)return;
+   D=build(latest);
+   if(meta.c){const cols=JSON.parse(meta.c);if(cols.length)D.cols=cols}
+   paint();
+  }catch(syncError){console.error('Firebase live sync failed:',syncError)}
+ },syncError=>console.error('Firebase live sync listener failed:',syncError));
  }catch(e){console.error('Firebase init failed:',e);const el=document.querySelector('#dt');if(el)el.insertAdjacentHTML('afterbegin','<p class="mu">Cloud connection उपलब्ध नाही. Internet आणि Firebase settings तपासा.</p>')}})();
 async function ensureAdmin(){if(!FB_READY||!FB_AUTH)throw new Error('Firebase अजून connect झालेले नाही. पान refresh करा.');if(FB_AUTH.currentUser)return FB_AUTH.currentUser;
  const email=prompt('Admin Email टाका:');if(!email)throw new Error('Admin login रद्द केले.');const password=prompt('Admin Password टाका:');if(!password)throw new Error('Admin login रद्द केले.');

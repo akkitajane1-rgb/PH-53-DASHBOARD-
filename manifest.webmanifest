@@ -10,10 +10,10 @@
   "theme_color": "#0b2a5b",
   "icons": [
     {
-      "src": "ph53-app-icon.svg",
+      "src": "icon.svg",
       "sizes": "any",
       "type": "image/svg+xml",
-      "purpose": "any maskable"
+      "purpose": "any"
     }
   ]
 }

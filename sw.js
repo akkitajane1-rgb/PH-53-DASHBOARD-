@@ -1,11 +1,12 @@
-const CACHE_NAME = "ph53-dashboard-v2";
+const CACHE_NAME = "ph53-dashboard-v3";
 
 const FILES_TO_CACHE = [
   "./",
   "./index.html",
   "./PH53_Railway_Dashboard_Firebase.html",
   "./manifest.webmanifest",
-  "./icon.svg"
+  "./icon.svg",
+  "./file_00000000e75c81faa868716fbd2795e0.png"
 ];
 
 self.addEventListener("install", event => {

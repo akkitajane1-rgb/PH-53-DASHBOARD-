@@ -228,9 +228,11 @@ let DB=null,FB_AUTH=null,FB_READY=false;
  const app=appMod.initializeApp(firebaseConfig),db=fsMod.getFirestore(app);FB_AUTH=authMod.getAuth(app);
  DB={doc:path=>{const ref=fsMod.doc(db,...path.split('/'));return {get:async()=>{const snap=await fsMod.getDoc(ref);return {exists:snap.exists(),data:()=>snap.data()}},set:data=>fsMod.setDoc(ref,data)}}};
  FB_READY=true;
- const m=await DB.doc('ph53/meta').get();if(!m.exists)return;let W=[];
- for(let i=0;i<m.data().n;i++){const c=await DB.doc('ph53/c'+i).get();if(c.exists)W=W.concat(JSON.parse(c.data().r))}
- if(W.length){D=build(W);if(m.data().c){const cc=JSON.parse(m.data().c);if(cc.length)D.cols=cc}paint()}
+ const m=await DB.doc('ph53/meta').get();
+ if(m.exists){let W=[];
+  for(let i=0;i<m.data().n;i++){const c=await DB.doc('ph53/c'+i).get();if(c.exists)W=W.concat(JSON.parse(c.data().r))}
+  if(W.length){D=build(W);if(m.data().c){const cc=JSON.parse(m.data().c);if(cc.length)D.cols=cc}paint()}
+ }
  // Live Sync: refresh connected dashboards whenever Admin saves cloud data.
  let liveSyncRun=0;
  fsMod.onSnapshot(fsMod.doc(db,'ph53/meta'),async snap=>{

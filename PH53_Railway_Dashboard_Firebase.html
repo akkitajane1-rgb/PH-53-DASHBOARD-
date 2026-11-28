@@ -239,9 +239,15 @@ textarea,.fl input,.fl select{border-radius:8px;border-color:var(--line)}
   .fl input,.fl select,.fl textarea,textarea{max-width:100%;min-width:0}
   img,canvas,svg{max-width:100%}
 }
+body:not(.cloud-ready) main>section,body:not(.cloud-ready) .ft{display:none!important}
+.cloud-loading{min-height:38vh;display:flex;align-items:center;justify-content:center;flex-direction:column;gap:12px;text-align:center;color:var(--mut);font-weight:700;padding:24px}
+.cloud-loading:before{content:"";width:32px;height:32px;border:4px solid var(--line);border-top-color:var(--gold);border-radius:50%;animation:ph53spin .8s linear infinite}
+.cloud-loading.error:before{display:none}
+@keyframes ph53spin{to{transform:rotate(360deg)}}
 </style></head><body>
 <header><div class="lamps"><i></i><i></i><i></i></div><div class="brandline">INDIAN RAILWAYS <span>•</span> WESTERN RAILWAY</div><div class="board" id="hm" role="button" tabindex="0" title="Home">PH-53</div><p>PASSENGER AMENITIES · WORKS MONITORING DASHBOARD</p><div class="rail"></div></header>
 <main>
+<div id="cloudLoading" class="cloud-loading">Cloud मधील नवीन डेटा लोड होत आहे...</div>
 <section id="home"><div class="kp" id="kp"></div><div class="mini" id="mini"></div><h2>Menu</h2><div id="ls"></div></section>
 <section id="dt" hidden></section>
 <p class="ft">PH-53 works dashboard<br><span style="display:inline-block;margin-top:7px;color:#d9ad55;font:700 13px system-ui,sans-serif;letter-spacing:1.2px;text-transform:none">Created by Akki</span></p></main>
@@ -253,7 +259,7 @@ function paint(){const k=D.k;
 $('#mini').innerHTML=`<div class="card"><h3>Completion</h3><div class="dn" style="--p:${pc.toFixed(1)}"><div><b>${pc.toFixed(1)}%</b><span>Completed</span></div></div><p class="mu">${n0(k.d)} of ${n0(k.w)} works</p></div><div class="card"><h3>Top agencies by works</h3>${ag.map(([a,c])=>`<div class="br"><span>${a}</span><div class="tr"><i style="width:${c/mx*100}%"></i></div><b>${n0(c)}</b></div>`).join('')}</div>`}
 $('#kp').innerHTML=`<div class="k"><b>${n0(k.w)}</b><span>Works</span></div><div class="k"><b>${n2(k.c)}</b><span>Cost (₹ crore)</span></div><div class="k"><b>${n0(k.d)}</b><span>Completed (${(k.d/k.w*100).toFixed(1)}%)</span><div class="pr"><i style="width:${k.d/k.w*100}%"></i></div></div><div class="k"><b>${n0(k.w-k.d)}</b><span>WIP</span></div>`;
 $('#ls').innerHTML=`<button class="opt" onclick="works()"><i class="tl">📋</i><div><b>Works list</b><small>All ${n0(k.w)} works with search and filters</small></div><em>${n0(k.w)} works</em></button><button class="opt" onclick="ags()"><i class="tl">🚉</i><div><b>Executing agencies</b><small>Pick an agency to see its works</small></div><em>${D.v[0].rows.length} agencies</em></button><button class="opt" onclick="sums()"><i class="tl">📊</i><div><b>Summaries</b><small>${D.v.length} summaries, choose one to open</small></div><em>${D.v.length} summaries</em></button><button class="opt" onclick="upd()"><i class="tl">🔄</i><div><b>Update data</b><small>Excel file निवडा, सगळं आपोआप बदलतं</small></div><em>Update</em></button>`;
-}D=build(D.w);paint();
+}D=build(D.w);
 const IX=[1,4,3,5,2];let S={};
 const wk=(i,j)=>works({i:IX[i],v:D.v[i].rows[j],l:D.v[i].th},'show('+i+')');
 function works(f,b){S={q:'',s:'',a:f&&f.i==1?f.v:'',f:f&&f.i!=1?f:null,b:b||'home()',limit:100};
@@ -278,6 +284,8 @@ Object.assign(v[3],{rows:pb,cols:['Completed','WIP'],n:pb.map(p=>[W.filter(r=>r[
 Object.assign(v[4],{rows:dv,cols:cs,n:N(dv,2,cs,3),c:dv.map(d=>cs.map(s=>+S(W.filter(r=>r[2]==d&&r[3]==s),r=>r[6]).toFixed(4)))});
 return{k:{w:W.length,c:+S(W,r=>r[6]).toFixed(2),d:W.filter(r=>r[8]=='Completed').length},v,w:W,cols:(()=>{const u=new Set;W.forEach(r=>r[9]&&Object.keys(r[9]).forEach(k=>u.add(k)));return[...u]})()}}
 let DB=null,FB_AUTH=null,FB_READY=false,LAST_UPDATED=0;
+function cloudLoading(msg,error=false){const el=document.querySelector('#cloudLoading');if(el){el.textContent=msg;el.classList.toggle('error',error)}}
+function cloudReady(){document.body.classList.add('cloud-ready');const el=document.querySelector('#cloudLoading');if(el)el.hidden=true}
 // Firebase cloud storage adapter: existing dashboard data/formulas remain unchanged.
 (async()=>{try{
  const [appMod,authMod,fsMod]=await Promise.all([
@@ -292,8 +300,9 @@ let DB=null,FB_AUTH=null,FB_READY=false,LAST_UPDATED=0;
  const m=await DB.doc('ph53/meta').get();
  if(m.exists){LAST_UPDATED=m.data().t||0;let W=[];
   for(let i=0;i<m.data().n;i++){const c=await DB.doc('ph53/c'+i).get();if(c.exists)W=W.concat(JSON.parse(c.data().r))}
-  if(W.length){D=build(W);if(m.data().c){const cc=JSON.parse(m.data().c);if(cc.length)D.cols=cc}paint()}
- }
+  if(W.length){D=build(W);if(m.data().c){const cc=JSON.parse(m.data().c);if(cc.length)D.cols=cc}paint();cloudReady()}
+  else cloudLoading('Cloud मध्ये Works डेटा उपलब्ध नाही. कृपया Admin कडून डेटा Save करून घ्या.',true);
+ }else cloudLoading('Cloud मध्ये डेटा उपलब्ध नाही. कृपया Admin कडून डेटा Save करून घ्या.',true);
  // Live Sync: refresh connected dashboards whenever Admin saves cloud data.
  let liveSyncRun=0;
  fsMod.onSnapshot(fsMod.doc(db,'ph53/meta'),async snap=>{
@@ -308,10 +317,10 @@ let DB=null,FB_AUTH=null,FB_READY=false,LAST_UPDATED=0;
    if(run!==liveSyncRun||!latest.length)return;
    D=build(latest);
    if(meta.c){const cols=JSON.parse(meta.c);if(cols.length)D.cols=cols}
-   paint();
+   paint();cloudReady();
   }catch(syncError){console.error('Firebase live sync failed:',syncError)}
  },syncError=>console.error('Firebase live sync listener failed:',syncError));
- }catch(e){console.error('Firebase init failed:',e);const el=document.querySelector('#dt');if(el)el.insertAdjacentHTML('afterbegin','<p class="mu">Cloud connection उपलब्ध नाही. Internet आणि Firebase settings तपासा.</p>')}})();
+ }catch(e){console.error('Firebase init failed:',e);cloudLoading('Cloud connection उपलब्ध नाही. Internet तपासून पान Refresh करा.',true)}})();
 async function ensureAdmin(){
  if(!FB_READY||!FB_AUTH)throw new Error('Firebase अजून connect झालेले नाही. पान refresh करा.');
  const ADMIN_UID='IlRmKcnXaghd3vJC4K2gmQL3oCO2';

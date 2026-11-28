@@ -100,8 +100,7 @@ header:after{
 }
 .board:before,.board:after{display:none}
 .board{animation:ph53move 7s ease-in-out infinite alternate}
-@keyframes ph53move{from{transform:translateX(0)}to{transform:translateX(max(0px,calc(100vw - 100% - 40px)))}}
-@media(prefers-reduced-motion:reduce){.board{animation:ph53move 7s ease-in-out infinite alternate}}
+@keyframes ph53move{from{left:0}to{left:max(0px,calc(100vw - 270px))}}
 
 header p{
  position:relative;z-index:1;color:#d5e2ef;margin:12px 0 17px;
